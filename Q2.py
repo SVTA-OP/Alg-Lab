@@ -1,9 +1,9 @@
 def ordered_insert(u, v):
-    if not v:  # v is empty
+    if not v:   
         return [u]
-    if u <= v[0]:  # u <= head(v)
+    if u <= v[0]:   
         return [u] + v
-    # otherwise: head(v) + ordered_insert(u, tail(v))
+     
     return [v[0]] + ordered_insert(u, v[1:])
 
 
@@ -13,6 +13,6 @@ print(ordered_insert(u, v))
 
 
 def insertion_sort(v):
-    if not v:  # v is empty
+    if not v:   
         return []
     return ordered_insert(v[0], insertion_sort(v[1:]))
