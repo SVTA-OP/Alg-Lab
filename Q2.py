@@ -16,4 +16,3 @@ def insertion_sort(v):
     if not v:  # v is empty
         return []
     return ordered_insert(v[0], insertion_sort(v[1:]))
-
