@@ -1,4 +1,4 @@
-% Created 2026-01-11 Sun 22:27
+% Created 2026-01-18 Sun 16:12
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
@@ -28,7 +28,7 @@
 \tableofcontents
 
 \section{Partitioning the Array}
-\label{sec:org3801ff3}
+\label{sec:org2a9443c}
 
 Define a function partition1 (a, low, high)
 
@@ -41,7 +41,7 @@ def partition1(a, low, high):
     j = high - 1
 
     while i <= j:
-        if a[i] < pivot:
+        if a[is] < pivot:
             i += 1
         else:
             a[i], a[j] = a[j], a[i]
@@ -54,7 +54,7 @@ print(partition1([7,5,8,2,3,6], 0, 5))
 
 \end{verbatim}
 \section{Quick Sort using the partition function}
-\label{sec:org8d4a8bb}
+\label{sec:org05e59b0}
 
 \begin{verbatim}
 
@@ -71,7 +71,7 @@ print(QuickSort([7,5,8,2,3,6], 0,5))
 
 \end{verbatim}
 \section{Match Nuts and Bolts}
-\label{sec:org225cdcc}
+\label{sec:org6dfcf87}
 
 Find if a Nut matches a bolt in O(n\textsuperscript{2})
 

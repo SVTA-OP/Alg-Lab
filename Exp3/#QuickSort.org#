@@ -1,0 +1,129 @@
+#+TITLE: Experiment 3 - Divide and Conquer (Quick Sort, Nuts and Bolts)
+#+AUTHOR: Saravana Senthilkumar - 3122247001057
+
+* Partitioning the Array
+
+Define a function partition1 (a, low, high)
+
+
+#+begin_src python :results output :session qs
+
+  def partition1(a, low, high):
+      pivot = a[high]
+      i = low
+      j = high - 1
+
+      while i <= j:
+          if a[is] < pivot:
+              i += 1
+          else:
+              a[i], a[j] = a[j], a[i]
+              j -= 1
+      a[i], a[high] = a[high], a[i]
+      return i
+
+
+  print(partition1([7,5,8,2,3,6], 0, 5))
+
+#+end_src
+
+#+RESULTS:
+: 3
+
+
+* Quick Sort using the partition function
+
+#+begin_src python :results output :session qs
+  
+def QuickSort(a, low, high):
+    if low < high:
+    
+        p = partition1(a,low,high)
+        QuickSort(a, low, p-1)
+        QuickSort(a, p+1, high)
+        return a
+
+
+print(QuickSort([7,5,8,2,3,6], 0,5))
+
+#+end_src
+
+#+RESULTS:
+: [2, 3, 5, 6, 7, 8]
+
+* Match Nuts and Bolts
+
+Find if a Nut matches a bolt in O(n^2)
+
+#+begin_src python :results output :session qs
+
+  def find(a, b, low, high):
+      lpair = []
+      for i in range(low, high):
+          for j in range(low, high):
+              if a[i] == b[j]:
+                  lpair += [[i,j]]
+                  break
+      return lpair
+
+  a = [1,2,3,4,5]
+  b = [2,4,6,8,10]
+
+  x = find(a, b, 0, 5)
+  print("Matching Nuts and Bolts (Index of Pair): ", end='')
+  print(x)
+
+#+end_src
+
+#+RESULTS:
+: Matching Nuts and Bolts (Index of Pair): [[1, 0], [3, 1]]
+
+
+Find pivot value of bolt and partition the nut list
+
+#+begin_src python :results output :session qs
+
+  def partition(arr, low, high, piv):
+      i = low
+      for j in range(low, high):
+          if arr[j] < piv:
+              arr[i], arr[j] = arr[j], arr[i]
+              i += 1
+          elif arr[j] == piv:
+              arr[j], arr[high] = arr[high], arr[j]
+              j -= 1
+      arr[i], arr[high] = arr[high], arr[i]
+      return i
+
+  a = [4,2,3,1,5]
+  b = [2,4,1,3,5]
+  print("Pivot: ", partition(a, 0, 4, 4))
+
+#+end_src
+
+#+RESULTS:
+: Pivot:  3
+
+Sort Nuts and Bolts recursively
+
+#+begin_src python :results output :session qs
+  def sort(a, b, low, high):
+      if low < high:
+          pn = partition(a, 0,4,b[high])
+          pb = partition(b, 0, 4,a[pn])
+          sort(a,b,0,pn-1)
+          sort(a,b,pn+1,high)
+          # print(a) # Nut
+          # print(b) # Bolt
+
+  a = [4,2,3,1,5]
+  b = [2,4,1,3,5]
+  sort(a,b, 0, 4)
+  print("Nuts : ", a)
+  print("Bolts: ", b)
+#+end_src
+
+#+RESULTS:
+: Nuts :  [1, 5, 3, 4, 2]
+: Bolts:  [1, 4, 3, 5, 2]
+
