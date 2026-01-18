@@ -1,0 +1,234 @@
+% Created 2026-01-18 Sun 23:22
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{Saravana Senthilkumar - 3122247001057}
+\date{\today}
+\title{Exhaustive Search}
+\hypersetup{
+ pdfauthor={Saravana Senthilkumar - 3122247001057},
+ pdftitle={Exhaustive Search},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 30.2 (Org mode 9.7.11)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{1. Backtracking for Exhaustive Enumeration}
+\label{sec:org05cfed3}
+
+\subsection{1. Implement Solve(Y, k) to print all permutations of set \{0. .n-1\}}
+\label{sec:org2feabee}
+
+\begin{verbatim}
+def Solve(Y, k):
+    n = len(Y)
+    if k == n:
+        print(Y[:k])
+        return
+
+    for choice in range(n):
+        if choice not in Y[:k]:
+            Y[k] = choice
+            Solve(Y, k + 1)
+
+a = [None] * 3
+Solve(a, 0)
+\end{verbatim}
+\subsection{Implement a Python iterator Permutations(n) that returns all permutations of set \{0. .n-1\}.}
+\label{sec:orgd0eae2c}
+\subsection{Call the iterator to print all the permutations.}
+\label{sec:org6ead5f9}
+
+\begin{verbatim}
+def Permutations(n):
+    Y = [None] * n
+    Solve(Y, 0)
+Permutations(4)
+\end{verbatim}
+\section{Backtracking for Exhaustive Search}
+\label{sec:org389d1ac}
+
+\subsection{Formulate the 4-queen problem}
+\label{sec:orge68aa1e}
+
+\begin{verbatim}
+def Safe(y, r, c):
+    for r1 in range(r):
+        c1 = y[r1]
+        if c1 == c or abs(c - c1) == abs(r - r1):
+            return False
+    return True
+
+
+def PlaceQueens(y, j):
+    n = len(y)
+    if j == n:
+        print(y[:])
+        return
+
+    for k in range(n):
+        if Safe(y, j, k):
+            y[j] = k
+            PlaceQueens(y, j + 1)
+
+y = [0] * 4
+PlaceQueens(y, 0)
+print(y)
+\end{verbatim}
+\subsection{Use exhaustive search to find any one safe configuration}
+\label{sec:org112e8b9}
+
+\begin{verbatim}
+def IsQueenSafe(y):
+    n = len(y)
+    for i in range(n):
+        for j in range(i + 1, n):
+            if abs(y[i] - y[j]) == abs(i - j):
+                return False
+    return True
+
+def Permute(y, k, n):
+    if k == n:
+        if IsQueenSafe(y):
+            return y[:]     
+        return None
+
+    for c in range(n):
+        if c not in y[:k]:
+            y[k] = c
+            z = Permute(y, k + 1, n)
+            if z is not None:
+                return z
+
+    return None    
+result = Permute([None] * 4, 0, 4)
+print(result)
+\end{verbatim}
+\subsection{Find all the safe configurations}
+\label{sec:org49464e8}
+
+\begin{verbatim}
+def PermuteAll(y, k, n, solutions):
+    if k == n:
+        if IsQueenSafe(y):
+            solutions += [y]
+        return
+
+    for c in range(n):
+        if c not in y[:k]:
+            y[k] = c
+            PermuteAll(y, k + 1, n, solutions)
+y = [None] * 4
+PermuteAll(y, 0, 4,[])
+print(solutions)
+
+\end{verbatim}
+\subsection{Develop an algorithm PlaceQueens() directly, which prunes the subtree below a partial configuration}
+\label{sec:org33f4d61}
+
+\begin{verbatim}
+def PlaceQueens(y, r, solutions):
+    n = len(y)
+    if r == n:
+        solutions += [y]
+        return
+
+    for c in range(n):
+        if Safe(y, r, c):
+            y[r] = c
+            PlaceQueens(y, r + 1, solutions)
+PlaceQueens([None] * 4, 0, [])
+print(solutions)
+\end{verbatim}
+\section{Backtracking for Optimization}
+\label{sec:org8a41b1c}
+
+\subsection{Write a function exhaustive enumereate () that enumerates all the subsets of a set \{0 . . n − 1\} of size.}
+\label{sec:org4f16a0c}
+
+\begin{verbatim}
+def exhaustive_enumerate(x, k, n):
+    if k == n:
+        print(x)
+        return
+
+    x[k] = 0
+    exhaustive_enumerate(x, k + 1, n)
+
+    x[k] = 1
+    exhaustive_enumerate(x, k + 1, n)
+
+x = [0] * 3
+exhaustive_enumerate(x, 0, 3)
+\end{verbatim}
+\subsection{Develop an algorithm to find and print the subsets whose weights add upto W.}
+\label{sec:org57e8481}
+
+\begin{verbatim}
+def SubsetSum(w, x, k, n, W, current_sum):
+    if k == n:
+        if current_sum == W:
+            print(x)
+        return
+
+
+    x[k] = 0
+    SubsetSum(w, x, k + 1, n, W, current_sum)
+
+
+    x[k] = 1
+    SubsetSum(w, x, k + 1, n, W, current_sum + w[k])
+
+
+w = [8, 6, 7, 5, 3]
+W = 15
+x = [0] * len(w)
+
+SubsetSum(w, x, 0, len(w), W, 0)
+\end{verbatim}
+\subsection{Compute the maximum-weight subset not exceeding capacity W}
+\label{sec:org2685e94}
+
+\begin{verbatim}
+def MaxSubsetSum(w, x, k, n, W, current_sum, best):
+    if current_sum > W:
+        return best
+
+    if k == n:
+        if current_sum > best:
+            best = current_sum
+        return best
+
+
+    best = MaxSubsetSum(w, x, k + 1, n, W, current_sum, best)
+
+
+    x[k] = 1
+    best = MaxSubsetSum(w, x, k + 1, n, W, current_sum + w[k], best)
+    x[k] = 0
+
+    return best
+
+
+w = [11, 6, 5, 1, 7, 13, 12]
+W = 15
+x = [0] * len(w)
+
+best = MaxSubsetSum(w, x, 0, len(w), W, 0, 0)
+print(best)
+\end{verbatim}
+\end{document}
