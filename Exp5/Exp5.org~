@@ -1,0 +1,134 @@
+#+title: Session 5: Dynamic Programming
+#+author: Saravana Senthilkumar - 3122247001057
+
+* 1. Longest Increasing Subsequence (Exhaustive Search)
+
+** 1. Design and Implement LengthES(i)
+
+#+begin_src python :results output :session lis
+def LengthES(A, i):
+    max_len = 0
+    n = len(A)
+    for j in range(i + 1, n):
+        if A[j] > A[i]:
+            res = LengthES(A, j)
+            if res > max_len:
+                max_len = res
+    return 1 + max_len
+#+end_src
+
+#+RESULTS:
+
+** 2. Test LengthES with provided arrays
+
+#+begin_src python :results output :session lis
+def RunTest(arr):
+    A_prime = [float('-inf')] + arr
+    result = LengthES(A_prime, 0) - 1
+    print(result)
+
+arr1 = [2, 4, 3, 5, 1, 7, 6, 9, 8]
+RunTest(arr1)
+
+arr2 = [5, 1, 5, 7, 2, 4, 9, 8]
+RunTest(arr2)
+
+arr3 = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5, 8, 9, 7, 9, 3, 2, 3, 8, 4, 6, 2, 6]
+RunTest(arr3)
+#+end_src
+
+#+RESULTS:
+: 5
+: 4
+: 6
+
+* 2. Memoized Exhaustive Search
+
+** 1. Construct and Implement LengthM(i)
+
+#+begin_src python :results output :session lis
+def LengthM(A, i, memo):
+    if memo[i] != -1:
+        return memo[i]
+    max_len = 0
+    n = len(A)
+    for j in range(i + 1, n):
+        if A[j] > A[i]:
+            res = LengthM(A, j, memo)
+            if res > max_len:
+                max_len = res
+    memo[i] = 1 + max_len
+    return memo[i]
+
+def RunMemoTest(arr):
+    A_prime = [float('-inf')] + arr
+    n = len(A_prime)
+    memo = [-1] * n
+    result = LengthM(A_prime, 0, memo) - 1
+    print(result)
+
+RunMemoTest(arr1)
+RunMemoTest(arr2)
+RunMemoTest(arr3)
+#+end_src
+
+#+RESULTS:
+: 5
+: 4
+: 6
+
+* 3. Dynamic Programming
+
+** 1. Design LengthDP(A, 1, n)
+
+#+begin_src python :results output :session lis
+def LengthDP(arr):
+    A = [float('-inf')] + arr
+    n = len(A)
+    L = [0] * n
+    S = [-1] * n
+    for i in range(n - 1, -1, -1):
+        max_sub_len = 0
+        successor = -1
+        for j in range(i + 1, n):
+            if A[j] > A[i]:
+                if L[j] > max_sub_len:
+                    max_sub_len = L[j]
+                    successor = j
+        L[i] = 1 + max_sub_len
+        S[i] = successor
+    return L, S, A
+#+end_src
+
+#+RESULTS:
+
+** 2. Trace the Solution (TraceLIS)
+
+#+begin_src python :results output :session lis
+def TraceLIS(A, S, start_index):
+    result_sequence = []
+    curr = S[start_index]
+    while curr != -1:
+        result_sequence.append(A[curr])
+        curr = S[curr]
+    return result_sequence
+
+def SolveDP(arr):
+    L, S, A_prime = LengthDP(arr)
+    length = L[0] - 1
+    sequence = TraceLIS(A_prime, S, 0)
+    print(length)
+    print(sequence)
+
+SolveDP(arr1)
+SolveDP(arr2)
+SolveDP(arr3)
+#+end_src
+
+#+RESULTS:
+: 5
+: [2, 4, 5, 7, 9]
+: 4
+: [1, 2, 4, 9]
+: 6
+: [1, 4, 5, 6, 7, 9]
