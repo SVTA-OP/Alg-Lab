@@ -57,7 +57,6 @@ def pq_remove_min(pq):
             
     item = pq[min_idx]
     
-    # Remove by slicing: elements before + elements after
     pq = pq[:min_idx] + pq[min_idx+1:]
     
     return item, pq
