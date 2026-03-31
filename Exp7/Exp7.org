@@ -1,0 +1,195 @@
+#+title: Session 6: Greedy Algorithms
+#+author: Saravana Senthilkumar - 3122247001057
+
+* Experiment 7: Iterative Improvement
+
+** 1. Provide a Data Strucure to represent the men and women preference list.
+
+#+begin_src python :results output :session Exp7
+men = [["a", ["r", "q", "s"]], ["b", ["s", "q", "r"]], ["c", ["q", "r", "s"]]]
+
+
+women = [["q", ["a", "c", "b"]], ["r", ["c", "a", "b"]], ["s", ["a", "b", "c"]]]
+#+end_src
+
+#+RESULTS:
+
+*** Function is_unstable(m,w) to check unstable pair or not
+
+#+begin_src python :results output :session Exp7
+def is_unstable(women, m, w):
+    for i in range(len(women)):
+        if women[i][0] == w:
+            for j in range(len(women[i][1])):
+                if women[i][1][j] == m:
+                    if j == 0:
+                        return False
+                    else:
+                        return True
+
+print(is_unstable(women, "a", "r"))
+print(is_unstable(women, "a", "q"))
+
+#+end_src
+
+#+RESULTS:
+: True
+: False
+
+** 2.  Represent his/her currently matched partner. Also modify the data stuctures men and women to represent both match and the preference lists.
+
+#+begin_src python :results output :session Exp7
+men = [
+    ["a", ["u", "r", "t", "s"], 0, None],
+    ["b", ["r", "t", "u", "s"], 0, None],
+    ["c", ["t", "u", "s", "r"], 0, None],
+    ["d", ["u", "r", "t", "s"], 0, None]
+]
+
+women = [
+    ["r", ["a", "c", "d", "b"], None],
+    ["s", ["d", "a", "b", "c"], None],
+    ["t", ["c", "b", "d", "a"], None],
+    ["u", ["b", "d", "c", "a"], None]
+]
+#+end_src
+
+#+RESULTS:
+
+
+** 3. Define the functions propose(), withdraw_proposal(), accept_proposal(), reject_proposal()
+
+#+begin_src python :results output :session Exp7
+def propose(men, m):
+    for i in range(len(men)):
+        if men[i][0] == m:
+            print("Man {} is proposing to {}".format(m, men[i][1][men[i][2]]))
+            men[i][3] = men[i][1][men[i][2]]
+            men[i][2] += 1
+            break
+
+
+def withdraw_proposal(men, m):
+    for i in range(len(men)):
+        if men[i][0] == m:
+            if men[i][2] > 0:
+                men[i][2] -= 1
+                print("{} withdraws proposal to {}".format(m, men[i][1][men[i][2]]))
+            break
+
+
+def accept_proposal(women, m, w):
+    for i in range(len(women)):
+        if women[i][0] == w:
+            for j in range(len(women[i][1])):
+                if women[i][1][j] == m:
+                    women[i][2] = m
+                    print("{} accepts proposal from {}".format(w, m))
+                    break
+
+
+def reject_proposal(men, women, w):
+    for i in range(len(women)):
+        if women[i][0] == w:
+            c_m = women[i][2]
+            if c_m is not None:
+                women[i][2] = None
+                for j in range(len(men)):
+                    if men[j][0] == c_m:
+                        men[j][3] = None
+                        break
+                print("{} rejects proposal from {}".format(w, c_m))
+                break
+#+end_src
+
+#+RESULTS:
+
+** 4. Implement Gayle-Shapeley algorithm to find a stable matching.
+
+#+begin_src python :results output :session Exp7
+def stable_match(men, women):
+    while True:
+        man = []
+        for i in men:
+            if i[3] is None and i[2] < len(i[1]):
+                man = i
+                break
+        if man == []:
+            break
+
+        woman = man[1][man[2]]
+        propose(men, man[0])
+
+        for j in women:
+            if j[0] == woman:
+                w = j
+                break
+
+        current_man = w[2]
+
+        if current_man is None:
+            accept_proposal(women, man[0], woman)
+        elif w[1].index(man[0]) < w[1].index(current_man):
+            reject_proposal(men, women, woman)
+            accept_proposal(women, man[0], woman)
+        else:
+            print("{} rejects proposal from {}".format(w[0], man[0]))
+            for i in men:
+                if i[0] == man[0]:
+                    i[3] = None
+                    break
+    print("\n--- Final Stable Matching ---")
+    for w in women:
+        print("Woman {} is matched with Man {}".format(w[0], w[2]))
+
+
+men = [
+    ["a", ["u", "r", "t", "s"], 0, None],
+    ["b", ["r", "t", "u", "s"], 0, None],
+    ["c", ["t", "u", "s", "r"], 0, None],
+    ["d", ["u", "r", "t", "s"], 0, None],
+]
+
+women = [
+    ["r", ["a", "c", "d", "b"], None],
+    ["s", ["d", "a", "b", "c"], None],
+    ["t", ["c", "b", "d", "a"], None],
+    ["u", ["b", "d", "c", "a"], None],
+]
+
+
+stable_match(men, women)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Man a is proposing to u
+u accepts proposal from a
+Man b is proposing to r
+r accepts proposal from b
+Man c is proposing to t
+t accepts proposal from c
+Man d is proposing to u
+u rejects proposal from a
+u accepts proposal from d
+Man a is proposing to r
+r rejects proposal from b
+r accepts proposal from a
+Man b is proposing to t
+t rejects proposal from b
+Man b is proposing to u
+u rejects proposal from d
+u accepts proposal from b
+Man d is proposing to r
+r rejects proposal from d
+Man d is proposing to t
+t rejects proposal from d
+Man d is proposing to s
+s accepts proposal from d
+
+--- Final Stable Matching ---
+Woman r is matched with Man a
+Woman s is matched with Man d
+Woman t is matched with Man c
+Woman u is matched with Man b
+#+end_example
